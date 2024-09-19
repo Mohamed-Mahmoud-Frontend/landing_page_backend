@@ -57,7 +57,7 @@ app.put('/api/orders/:id', (req, res) => {
 
 // حذف طلب بناءً على ID
 app.delete('/api/orders/:id', (req, res) => {
-  const id = Number(req.params.id); // تحويل الـ id إلى رقم
+  const { id } = Number(req.params.id);
 
   const orderIndex = orders.findIndex(order => order.id === id);
 
@@ -68,7 +68,6 @@ app.delete('/api/orders/:id', (req, res) => {
     res.status(404).send({ message: 'Order not found' });
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
