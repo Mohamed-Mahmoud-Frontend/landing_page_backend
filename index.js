@@ -1,72 +1,32 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const { v4: uuidv4 } = require('uuid'); // مكتبة لإنشاء معرفات فريدة
-
+// server.js
+const express = require("express");
+const fs = require("fs");
+const bodyParser = require("body-parser");
 const app = express();
-const PORT = 5000 || process.env.PORT;
+const PORT = 3001; // اختر المنفذ الذي تريده
 
-app.use(cors());
 app.use(bodyParser.json());
 
-let orders = [];
+app.post("/submit", (req, res) => {
+  const data = req.body;
 
-let orders = [];
-let lastId = 0; // متغير لتتبع آخر ID مستخدم
+  // قراءة البيانات السابقة من ملف JSON
+  fs.readFile("data.json", "utf8", (err, jsonData) => {
+    if (err) {
+      return res.status(500).send("فشل في قراءة الملف");
+    }
 
-// إضافة طلب جديد
-app.post('/api/orders', (req, res) => {
-  const order = req.body;
+    const json = JSON.parse(jsonData);
+    json.push(data); // إضافة البيانات الجديدة
 
-  lastId += 1; // زيادة الرقم
-  const orderWithIdAndTimestamp = {
-    ...order,
-    id: lastId, // استخدام الرقم المتزايد كـ ID
-    timestamp: new Date().toISOString(),
-  };
-
-  orders.push(orderWithIdAndTimestamp);
-  res.status(201).send({ message: 'Order received', order: orderWithIdAndTimestamp });
-});
-
-
-// جلب جميع الطلبات
-app.get('/api/orders', (req, res) => {
-  res.status(200).json(orders);
-});
-
-// تعديل طلب بناءً على ID
-app.put('/api/orders/:id', (req, res) => {
-  const { id } = req.params;
-  const updatedOrder = req.body;
-
-  const orderIndex = orders.findIndex(order => order.id === id);
-
-  if (orderIndex !== -1) {
-    // تحديث الطلب مع الحفاظ على الـ id والتاريخ
-    orders[orderIndex] = {
-      ...orders[orderIndex],
-      ...updatedOrder,
-      timestamp: new Date().toISOString(), // تحديث الوقت عند التعديل
-    };
-    res.status(200).send({ message: 'Order updated', order: orders[orderIndex] });
-  } else {
-    res.status(404).send({ message: 'Order not found' });
-  }
-});
-
-// حذف طلب بناءً على ID
-app.delete('/api/orders/:id', (req, res) => {
-  const { id } = req.params;
-
-  const orderIndex = orders.findIndex(order => order.id === id);
-
-  if (orderIndex !== -1) {
-    const deletedOrder = orders.splice(orderIndex, 1); // حذف الطلب
-    res.status(200).send({ message: 'Order deleted', order: deletedOrder });
-  } else {
-    res.status(404).send({ message: 'Order not found' });
-  }
+    // كتابة البيانات المحدثة إلى الملف
+    fs.writeFile("data.json", JSON.stringify(json, null, 2), (err) => {
+      if (err) {
+        return res.status(500).send("فشل في كتابة الملف");
+      }
+      res.status(200).send("تم إرسال البيانات بنجاح");
+    });
+  });
 });
 
 app.listen(PORT, () => {
