@@ -11,24 +11,28 @@ app.use(bodyParser.json());
 
 let orders = [];
 
+let orders = [];
+let lastId = 0; // متغير لتتبع آخر ID مستخدم
+
 // إضافة طلب جديد
 app.post('/api/orders', (req, res) => {
   const order = req.body;
 
-  // إضافة معرف فريد وتاريخ ووقت الطلب
+  lastId += 1; // زيادة الرقم
   const orderWithIdAndTimestamp = {
     ...order,
-    id: uuidv4(), // إنشاء معرف فريد للطلب
-    timestamp: new Date().toISOString(), // حفظ الوقت بصيغة ISO
+    id: lastId, // استخدام الرقم المتزايد كـ ID
+    timestamp: new Date().toISOString(),
   };
 
   orders.push(orderWithIdAndTimestamp);
   res.status(201).send({ message: 'Order received', order: orderWithIdAndTimestamp });
 });
 
+
 // جلب جميع الطلبات
 app.get('/api/orders', (req, res) => {
-  res.status(200).json(orders); // تأكد من أن الـ ID يظهر مع كل طلب
+  res.status(200).json(orders);
 });
 
 // تعديل طلب بناءً على ID
