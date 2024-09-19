@@ -11,11 +11,12 @@ app.use(bodyParser.json());
 
 let orders = [];
 
+let orders = [];
 let lastId = 0; // متغير لتتبع آخر ID مستخدم
 
 // إضافة طلب جديد
 app.post('/api/orders', (req, res) => {
-  const order = Number(req.body.id);
+  const order = req.body;
 
   lastId += 1; // زيادة الرقم
   const orderWithIdAndTimestamp = {
