@@ -21,7 +21,7 @@ app.post('/api/orders', (req, res) => {
   lastId += 1; // زيادة الرقم
   const orderWithIdAndTimestamp = {
     ...order,
-    id: lastId, // استخدام الرقم المتزايد كـ ID
+    id: lastId,
     timestamp: new Date().toISOString(),
   };
 
@@ -57,7 +57,7 @@ app.put('/api/orders/:id', (req, res) => {
 
 // حذف طلب بناءً على ID
 app.delete('/api/orders/:id', (req, res) => {
-  const { id } = req.params;
+  const id = Number(req.params.id); // تحويل الـ id إلى رقم
 
   const orderIndex = orders.findIndex(order => order.id === id);
 
@@ -68,6 +68,7 @@ app.delete('/api/orders/:id', (req, res) => {
     res.status(404).send({ message: 'Order not found' });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
