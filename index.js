@@ -11,8 +11,7 @@ app.use(bodyParser.json());
 
 let orders = [];
 
-let orders = [];
-let lastId = 0; // متغير لتتبع آخر ID مستخدم
+let lastId = 0;
 
 // إضافة طلب جديد
 app.post('/api/orders', (req, res) => {
