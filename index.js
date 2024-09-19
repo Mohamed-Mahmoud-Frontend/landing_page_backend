@@ -28,7 +28,7 @@ app.post('/api/orders', (req, res) => {
 
 // جلب جميع الطلبات
 app.get('/api/orders', (req, res) => {
-  res.status(200).json(orders);
+  res.status(200).json(orders); // تأكد من أن الـ ID يظهر مع كل طلب
 });
 
 // تعديل طلب بناءً على ID
